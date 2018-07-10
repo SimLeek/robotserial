@@ -15,7 +15,7 @@ with open('README.rst', 'r', encoding='utf-8') as f:
 
 REQUIRES = []
 EXTRA_REQUIRES = {
-    ':python_version <= "2.7': ['pyserial']
+    ':python_version <= "2.7"': ['pyserial']
 }
 
 setup(
@@ -27,7 +27,7 @@ setup(
     author_email='josh.miklos@gmail.com',
     maintainer='SimLeek',
     maintainer_email='josh.miklos@gmail.com',
-    url='https://github.com/_/robotserial',
+    url='https://github.com/SimLeek/robotserial',
     license='MIT/Apache-2.0',
 
     keywords=[
