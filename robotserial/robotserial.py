@@ -10,7 +10,7 @@ def is_3(): return sys.version_info[0] >= 3
 
 
 if is_3():
-    from typing import Optional
+    from typing import Optional, Callable, List
 
 
 def serial_ports():
@@ -54,7 +54,7 @@ def check_byte_packing(ser):
         raise SerialError("Initial test bytes not read. Short serial timeout likely cause.")
     test_float = struct.unpack('f', test_float_bytes)[0]
     if not (3.14160 > test_float > 3.14158):
-        raise SerialError("Test float not converted correctly.")
+        raise SerialError("Test float failed to convert correctly. Check baud rate or endian.")
 
 
 class SerialFloatArrayIn(object):
@@ -81,6 +81,11 @@ class SerialFloatArrayIn(object):
 
     def lock(self):
         self.read_lock = Lock()
+
+    def set_callback(self,
+                     callback # type: Callable[List[float], None]
+                     ):
+        self.read_callback = callback
 
 
 class SerialStateMachine(object):
@@ -136,6 +141,10 @@ class SerialStateMachineThread(Thread):
         self.baud_rate = baud_rate
         self.time_out = time_out
         self.serial_state_machine = None  # type: Optional[SerialStateMachine]
+        self.accelerometer = None # type: Optional[SerialFloatArrayIn]
+        self.gyroscope = None # type: Optional[SerialFloatArrayIn]
+        self.magnetometer = None # type: Optional[SerialFloatArrayIn]
+
         self.ssm_lock = Lock()
         self.ssm_lock.acquire()
         self.exit = False
@@ -165,6 +174,9 @@ class SerialStateMachineThread(Thread):
                 check_byte_packing(ser)
 
                 self.serial_state_machine = SerialStateMachine(ser)
+                self.accelerometer = self.serial_state_machine.accelerometer
+                self.gyroscope = self.serial_state_machine.gyroscope
+                self.magnetometer = self.serial_state_machine.magnetometer
                 self.ssm_lock.release()
                 while not (self.serial_state_machine.exit or self.exit):
                     self.serial_state_machine(ser.read(1))

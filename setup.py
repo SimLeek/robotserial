@@ -10,7 +10,7 @@ with open('robotserial/__init__.py', 'r') as f:
     else:
         version = '0.0.1'
 
-with open('README.rst', 'r', encoding='utf-8') as f:
+with open('README.md', 'r', encoding='utf-8') as f:
     readme = f.read()
 
 REQUIRES = []
@@ -23,6 +23,7 @@ setup(
     version=version,
     description='',
     long_description=readme,
+    long_description_content_type='text/markdown',
     author='SimLeek',
     author_email='josh.miklos@gmail.com',
     maintainer='SimLeek',
